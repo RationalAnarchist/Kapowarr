@@ -100,21 +100,39 @@ In this example, we set `/home/cas/media/Downloads` as the download folder and w
 	```bash
 	sudo apt-get install python3-pip
 	```
-
+	### Setting up a user
+ 	We need a user to run Kapowarr as.  If you already have a user account that you want to use, that's great - just skip this section.  If you need to create a new user, you need to do the following.
+  	To create a new user called kapowarr just execute:
+	```bash
+   	sudo adduser kapowarr
+ 	```
+	If you want to add the new user to a specific group (e.g. if you have a media group set up) you can use:
+	```bash
+ 	sudo usermod -aG media kapowarr
+  	```
+   	If you know where your comics are going to be stored, the easiest way to ensure that this user has access is to grant ownership.  e.g. if our file are to be stored in /mnt/comics we would run:
+	```bash
+    	sudo chown -R kapowarr:kapowarr /mnt/comics
+     	```
+      
 	### Installing Kapowarr
 	First of all, we need to clone the git repository:
 	```bash
 	git clone https://github.com/Casvt/Kapowarr /opt/Kapowarr
 	```
-	Then we need to install the requirements:
+	Then we need to install the requirements. For best practise, we should do this in a virtual environment:
 	```bash
-	pip3 install -r requirements.txt
-	```
+ 	cd /opt/Kapowarr
+  	python3 -m venv .venv
+	source .venv/bin/activate
+ 	python3 -m pip install -r requirements.txt --break-system-packages
+  	```
+   	note: If the initial python3 command doesn't work, you may have to use sudo.  If so, you will need it for all of the python3 and pip commands listed here.
 	Now, we can run the application by using
 	```bash
 	python3 /opt/Kapowarr/Kapowarr.py
 	```
-	note: If you have to run the pip command with sudo, you will need to run the python3 command with sudo as well
+	note: If you have to run the pip command with sudo, you will need to run the python3 commands with sudo as well
 
 	By default the application listens on port 5656 - so you can go to http://localhost:5656 to start using it.  To stop the application, just hit ctrl-c
 
@@ -145,9 +163,9 @@ In this example, we set `/home/cas/media/Downloads` as the download folder and w
 	# Add any command line options for your daemon here
 	DAEMON_OPTS=""
 
-	# This next line determines what user the script runs as.
-	# Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
-	DAEMON_USER=pi
+	# This next line determines what user the script runs as 
+	# Root generally not recommended
+	DAEMON_USER=kapowarr
 
 	# The process ID of the script when it runs is stored here:
 	PIDFILE=/var/run/$DAEMON_NAME.pid
